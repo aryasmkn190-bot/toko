@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { products, formatPrice, type Product } from "@/lib/products";
+import { useParams } from "next/navigation";
+import { products, formatPrice } from "@/lib/products";
 import Link from "next/link";
 import {
     HiArrowLeft,
@@ -13,38 +13,8 @@ import {
 import { FaWhatsapp } from "react-icons/fa";
 import { motion } from "framer-motion";
 
-const paymentMethods = [
-    {
-        id: "qris",
-        name: "QRIS",
-        desc: "Scan QR - Semua e-wallet & bank",
-        icon: "📱",
-    },
-    { id: "bri_va", name: "BRI VA", desc: "Virtual Account BRI", icon: "🏦" },
-    { id: "bni_va", name: "BNI VA", desc: "Virtual Account BNI", icon: "🏦" },
-    {
-        id: "permata_va",
-        name: "Permata VA",
-        desc: "Virtual Account Permata",
-        icon: "🏦",
-    },
-    {
-        id: "cimb_niaga_va",
-        name: "CIMB Niaga VA",
-        desc: "Virtual Account CIMB",
-        icon: "🏦",
-    },
-    {
-        id: "url",
-        name: "Metode Lainnya",
-        desc: "Pilih di halaman pembayaran",
-        icon: "💳",
-    },
-];
-
 export default function CheckoutPage() {
     const params = useParams();
-    const router = useRouter();
     const slug = params.slug as string;
     const product = products.find((p) => p.slug === slug);
 
@@ -52,7 +22,6 @@ export default function CheckoutPage() {
         customerName: "",
         customerPhone: "",
         customerEmail: "",
-        paymentMethod: "qris",
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
@@ -92,7 +61,6 @@ export default function CheckoutPage() {
                     customerName: form.customerName,
                     customerPhone: phone.startsWith("0") ? "62" + phone.slice(1) : phone,
                     customerEmail: form.customerEmail,
-                    paymentMethod: form.paymentMethod,
                 }),
             });
 
@@ -102,15 +70,9 @@ export default function CheckoutPage() {
                 throw new Error(data.error || "Terjadi kesalahan");
             }
 
-            if (data.method === "url" && data.paymentUrl) {
-                // Redirect to Pakasir payment page
-                window.location.href = data.paymentUrl;
-            } else {
-                // Show payment details page
-                router.push(
-                    `/payment/${data.orderId}?method=${data.payment.payment_method}&number=${encodeURIComponent(data.payment.payment_number)}&total=${data.payment.total_payment}&expired=${encodeURIComponent(data.payment.expired_at)}`
-                );
-            }
+            // Redirect to Pakasir payment page
+            // Pakasir handles payment UI (QRIS, VA, etc.)
+            window.location.href = data.paymentUrl;
         } catch (err) {
             setError(
                 err instanceof Error ? err.message : "Terjadi kesalahan"
@@ -243,7 +205,7 @@ export default function CheckoutPage() {
                                         placeholder="08123456789"
                                     />
                                     <p className="text-xs text-slate-500 mt-1">
-                                        Link produk akan dikirim ke WhatsApp ini
+                                        Link produk akan dikirim ke WhatsApp ini setelah pembayaran
                                     </p>
                                 </div>
 
@@ -264,36 +226,15 @@ export default function CheckoutPage() {
                                     />
                                 </div>
 
-                                {/* Payment Method */}
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-300 mb-3">
-                                        Metode Pembayaran
-                                    </label>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                        {paymentMethods.map((pm) => (
-                                            <button
-                                                key={pm.id}
-                                                type="button"
-                                                onClick={() =>
-                                                    setForm({ ...form, paymentMethod: pm.id })
-                                                }
-                                                className={`flex items-center gap-3 p-3 rounded-xl border transition-all text-left text-sm ${form.paymentMethod === pm.id
-                                                    ? "border-indigo-500/50 bg-indigo-500/10 ring-1 ring-indigo-500/30"
-                                                    : "border-white/10 bg-white/5 hover:border-white/20"
-                                                    }`}
-                                            >
-                                                <span className="text-xl">{pm.icon}</span>
-                                                <div>
-                                                    <div className="font-medium text-white text-sm">
-                                                        {pm.name}
-                                                    </div>
-                                                    <div className="text-xs text-slate-400">
-                                                        {pm.desc}
-                                                    </div>
-                                                </div>
-                                            </button>
-                                        ))}
+                                {/* Payment info */}
+                                <div className="glass rounded-xl p-4">
+                                    <div className="flex items-center gap-2 text-sm text-slate-300 mb-2">
+                                        <HiShieldCheck className="text-emerald-400" />
+                                        <span className="font-medium">Metode Pembayaran</span>
                                     </div>
+                                    <p className="text-xs text-slate-400">
+                                        Anda akan diarahkan ke halaman pembayaran aman untuk memilih metode pembayaran (QRIS, Transfer Bank, Virtual Account, dll).
+                                    </p>
                                 </div>
 
                                 {/* Error */}

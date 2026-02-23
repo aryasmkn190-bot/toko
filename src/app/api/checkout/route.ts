@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createTransaction, generatePaymentUrl } from "@/lib/pakasir";
+import { generatePaymentUrl } from "@/lib/pakasir";
 import { createOrder } from "@/lib/orders";
 import { getProductById } from "@/lib/products";
 import { generateOrderId } from "@/lib/products";
@@ -7,7 +7,7 @@ import { generateOrderId } from "@/lib/products";
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
-        const { productId, customerName, customerPhone, customerEmail, paymentMethod } = body;
+        const { productId, customerName, customerPhone, customerEmail } = body;
 
         // Validate
         if (!productId || !customerName || !customerPhone || !customerEmail) {
@@ -38,46 +38,20 @@ export async function POST(request: NextRequest) {
         }
 
         const orderId = generateOrderId();
-        const method = paymentMethod || "qris";
         const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
-        // If using URL method (simpler)
-        if (method === "url") {
-            const paymentUrl = generatePaymentUrl(
-                process.env.PAKASIR_PROJECT_SLUG,
-                product.price,
-                orderId,
-                {
-                    redirect: `${appUrl}/payment/success?order_id=${orderId}`,
-                }
-            );
+        // Generate Pakasir payment URL (redirect method)
+        // This is more reliable - Pakasir handles the payment UI
+        const paymentUrl = generatePaymentUrl(
+            process.env.PAKASIR_PROJECT_SLUG,
+            product.price,
+            orderId,
+            {
+                redirect: `${appUrl}/payment/success?order_id=${orderId}`,
+            }
+        );
 
-            createOrder({
-                orderId,
-                productId: product.id,
-                productName: product.name,
-                customerName,
-                customerPhone,
-                customerEmail,
-                amount: product.price,
-                status: "pending",
-                paymentMethod: method,
-                createdAt: new Date().toISOString(),
-            });
-
-            return NextResponse.json({
-                success: true,
-                orderId,
-                paymentUrl,
-                method: "url",
-            });
-        }
-
-        // API method - create transaction via Pakasir API
-        console.log("Creating Pakasir transaction:", { orderId, amount: product.price, method });
-        const result = await createTransaction(orderId, product.price, method);
-        console.log("Pakasir transaction created:", JSON.stringify(result));
-
+        // Save order
         createOrder({
             orderId,
             productId: product.id,
@@ -87,17 +61,16 @@ export async function POST(request: NextRequest) {
             customerEmail,
             amount: product.price,
             status: "pending",
-            paymentMethod: method,
-            paymentNumber: result.payment.payment_number,
-            expiredAt: result.payment.expired_at,
+            paymentMethod: "pakasir",
             createdAt: new Date().toISOString(),
         });
+
+        console.log("Order created:", { orderId, product: product.name, amount: product.price });
 
         return NextResponse.json({
             success: true,
             orderId,
-            payment: result.payment,
-            method: "api",
+            paymentUrl,
         });
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "Unknown error";
