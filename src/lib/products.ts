@@ -149,34 +149,3 @@ export function formatPrice(price: number): string {
         maximumFractionDigits: 0,
     }).format(price);
 }
-
-/**
- * Generate an order ID that encodes customer info.
- * Format: {productId}-{phone}-{random}
- * Example: P01-6285700009996-A3F2
- * 
- * This allows the webhook handler to extract customer info
- * without needing a database or persistent storage.
- */
-export function generateOrderId(productId: string, phone: string): string {
-    const rand = Math.random().toString(36).substring(2, 6).toUpperCase();
-    return `${productId}-${phone}-${rand}`;
-}
-
-/**
- * Parse order ID to extract product ID and phone number.
- * Returns null if format is invalid.
- */
-export function parseOrderId(orderId: string): { productId: string; phone: string } | null {
-    // Format: P01-6285700009996-A3F2
-    const parts = orderId.split("-");
-    if (parts.length < 3) return null;
-
-    const productId = parts[0];
-    const phone = parts[1];
-    const product = getProductById(productId);
-
-    if (!product || !phone || phone.length < 10) return null;
-
-    return { productId, phone };
-}

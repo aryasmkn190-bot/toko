@@ -48,7 +48,21 @@ export default function CheckoutPage() {
             // Validate phone number
             const phone = form.customerPhone.replace(/[^0-9]/g, "");
             if (phone.length < 10) {
-                setError("Nomor WhatsApp tidak valid");
+                setError("Nomor WhatsApp tidak valid (minimal 10 digit)");
+                setLoading(false);
+                return;
+            }
+
+            // Format phone to international format
+            const formattedPhone = phone.startsWith("0") ? "62" + phone.slice(1) : phone;
+
+            // Confirm phone number to prevent wrong delivery
+            const displayPhone = "0" + formattedPhone.slice(2);
+            const confirmed = window.confirm(
+                `Pastikan nomor WhatsApp Anda benar:\n\n📱 ${displayPhone}\n\nLink produk akan dikirim ke nomor ini setelah pembayaran berhasil.\n\nApakah nomor ini sudah benar?`
+            );
+
+            if (!confirmed) {
                 setLoading(false);
                 return;
             }
@@ -59,7 +73,7 @@ export default function CheckoutPage() {
                 body: JSON.stringify({
                     productId: product.id,
                     customerName: form.customerName,
-                    customerPhone: phone.startsWith("0") ? "62" + phone.slice(1) : phone,
+                    customerPhone: formattedPhone,
                     customerEmail: form.customerEmail,
                 }),
             });
@@ -71,7 +85,6 @@ export default function CheckoutPage() {
             }
 
             // Redirect to Pakasir payment page
-            // Pakasir handles payment UI (QRIS, VA, etc.)
             window.location.href = data.paymentUrl;
         } catch (err) {
             setError(

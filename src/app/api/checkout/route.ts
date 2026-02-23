@@ -1,16 +1,35 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generatePaymentUrl } from "@/lib/pakasir";
-import { getProductById, generateOrderId } from "@/lib/products";
+import { getProductById } from "@/lib/products";
+import { generateOrderId } from "@/lib/order-encoder";
 
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
         const { productId, customerName, customerPhone, customerEmail } = body;
 
-        // Validate
+        // Validate required fields
         if (!productId || !customerName || !customerPhone || !customerEmail) {
             return NextResponse.json(
                 { error: "Data tidak lengkap" },
+                { status: 400 }
+            );
+        }
+
+        // Validate phone format
+        const phone = customerPhone.replace(/[^0-9]/g, "");
+        if (phone.length < 10 || phone.length > 15) {
+            return NextResponse.json(
+                { error: "Nomor WhatsApp tidak valid" },
+                { status: 400 }
+            );
+        }
+
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(customerEmail)) {
+            return NextResponse.json(
+                { error: "Format email tidak valid" },
                 { status: 400 }
             );
         }
@@ -32,9 +51,8 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Generate order ID that encodes product + phone
-        // This way the webhook can extract customer info without a database
-        const orderId = generateOrderId(product.id, customerPhone);
+        // Generate encoded order ID (phone is obfuscated, not plain text)
+        const orderId = generateOrderId(product.id, phone);
         const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
         // Generate Pakasir payment URL
@@ -43,7 +61,7 @@ export async function POST(request: NextRequest) {
             product.price,
             orderId,
             {
-                redirect: `${appUrl}/payment/success?order_id=${orderId}&name=${encodeURIComponent(customerName)}`,
+                redirect: `${appUrl}/payment/success?order_id=${orderId}`,
             }
         );
 
@@ -51,7 +69,6 @@ export async function POST(request: NextRequest) {
             orderId,
             product: product.name,
             amount: product.price,
-            phone: customerPhone,
         });
 
         return NextResponse.json({
