@@ -25,6 +25,18 @@ export async function POST(request: NextRequest) {
             );
         }
 
+        // Check env vars
+        if (!process.env.PAKASIR_PROJECT_SLUG || !process.env.PAKASIR_API_KEY) {
+            console.error("Missing PAKASIR env vars:", {
+                slug: !!process.env.PAKASIR_PROJECT_SLUG,
+                apiKey: !!process.env.PAKASIR_API_KEY,
+            });
+            return NextResponse.json(
+                { error: "Konfigurasi payment gateway belum lengkap" },
+                { status: 500 }
+            );
+        }
+
         const orderId = generateOrderId();
         const method = paymentMethod || "qris";
         const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
@@ -32,7 +44,7 @@ export async function POST(request: NextRequest) {
         // If using URL method (simpler)
         if (method === "url") {
             const paymentUrl = generatePaymentUrl(
-                process.env.PAKASIR_PROJECT_SLUG!,
+                process.env.PAKASIR_PROJECT_SLUG,
                 product.price,
                 orderId,
                 {
@@ -62,7 +74,9 @@ export async function POST(request: NextRequest) {
         }
 
         // API method - create transaction via Pakasir API
+        console.log("Creating Pakasir transaction:", { orderId, amount: product.price, method });
         const result = await createTransaction(orderId, product.price, method);
+        console.log("Pakasir transaction created:", JSON.stringify(result));
 
         createOrder({
             orderId,
@@ -86,9 +100,10 @@ export async function POST(request: NextRequest) {
             method: "api",
         });
     } catch (error) {
-        console.error("Checkout error:", error);
+        const errorMessage = error instanceof Error ? error.message : "Unknown error";
+        console.error("Checkout error:", errorMessage);
         return NextResponse.json(
-            { error: "Terjadi kesalahan saat memproses pembayaran" },
+            { error: `Gagal memproses pembayaran: ${errorMessage}` },
             { status: 500 }
         );
     }
