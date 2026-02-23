@@ -122,7 +122,7 @@ export default function CheckoutPage() {
 
     return (
         <main className="min-h-screen animated-bg grid-pattern">
-            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-16">
+            <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-16">
                 {/* Back */}
                 <Link
                     href="/"
@@ -278,8 +278,8 @@ export default function CheckoutPage() {
                                                     setForm({ ...form, paymentMethod: pm.id })
                                                 }
                                                 className={`flex items-center gap-3 p-3 rounded-xl border transition-all text-left text-sm ${form.paymentMethod === pm.id
-                                                        ? "border-indigo-500/50 bg-indigo-500/10 ring-1 ring-indigo-500/30"
-                                                        : "border-white/10 bg-white/5 hover:border-white/20"
+                                                    ? "border-indigo-500/50 bg-indigo-500/10 ring-1 ring-indigo-500/30"
+                                                    : "border-white/10 bg-white/5 hover:border-white/20"
                                                     }`}
                                             >
                                                 <span className="text-xl">{pm.icon}</span>

@@ -88,7 +88,7 @@ function PaymentContent() {
     if (status === "completed") {
         return (
             <main className="min-h-screen animated-bg grid-pattern flex items-center justify-center px-4">
-                <div className="glass-card rounded-2xl p-8 sm:p-12 text-center max-w-md w-full">
+                <div className="relative z-10 glass-card rounded-2xl p-8 sm:p-12 text-center max-w-md w-full">
                     <div className="w-20 h-20 rounded-full bg-emerald-500/20 flex items-center justify-center mx-auto mb-6">
                         <HiCheckCircle className="text-5xl text-emerald-400" />
                     </div>
@@ -113,7 +113,7 @@ function PaymentContent() {
 
     return (
         <main className="min-h-screen animated-bg grid-pattern">
-            <div className="max-w-lg mx-auto px-4 py-8 sm:py-16">
+            <div className="relative z-10 max-w-lg mx-auto px-4 py-8 sm:py-16">
                 <div className="glass-card rounded-2xl p-6 sm:p-8">
                     {/* Header */}
                     <div className="text-center mb-8">

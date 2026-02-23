@@ -53,11 +53,9 @@ body {
 }
 
 .glass-card {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.05) 0%,
-    rgba(255, 255, 255, 0.02) 100%
-  );
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.05) 0%,
+      rgba(255, 255, 255, 0.02) 100%);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -65,11 +63,9 @@ body {
 }
 
 .glass-card:hover {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.08) 0%,
-    rgba(255, 255, 255, 0.04) 100%
-  );
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.08) 0%,
+      rgba(255, 255, 255, 0.04) 100%);
   border-color: rgba(255, 255, 255, 0.15);
   transform: translateY(-4px);
   box-shadow: 0 20px 60px -15px rgba(99, 102, 241, 0.2);
@@ -88,33 +84,31 @@ body {
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(
-      circle at 20% 50%,
+  pointer-events: none;
+  background: radial-gradient(circle at 20% 50%,
       rgba(99, 102, 241, 0.08) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 80% 20%,
+      transparent 50%),
+    radial-gradient(circle at 80% 20%,
       rgba(244, 63, 94, 0.06) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 40% 80%,
+      transparent 50%),
+    radial-gradient(circle at 40% 80%,
       rgba(52, 211, 153, 0.05) 0%,
-      transparent 50%
-    );
+      transparent 50%);
   animation: bgFloat 20s ease-in-out infinite;
   z-index: 0;
 }
 
 @keyframes bgFloat {
+
   0%,
   100% {
     transform: translate(0, 0) rotate(0deg);
   }
+
   33% {
     transform: translate(3%, -3%) rotate(1deg);
   }
+
   66% {
     transform: translate(-2%, 2%) rotate(-1deg);
   }
@@ -131,10 +125,12 @@ body {
 
 /* Pulse animation */
 @keyframes softPulse {
+
   0%,
   100% {
     opacity: 1;
   }
+
   50% {
     opacity: 0.7;
   }
@@ -146,20 +142,20 @@ body {
 
 /* Stripe grid pattern */
 .grid-pattern {
-  background-image: linear-gradient(
-      rgba(255, 255, 255, 0.03) 1px,
-      transparent 1px
-    ),
+  background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px,
+      transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
   background-size: 60px 60px;
 }
 
 /* Float animation */
 @keyframes float {
+
   0%,
   100% {
     transform: translateY(0px);
   }
+
   50% {
     transform: translateY(-10px);
   }
@@ -174,18 +170,17 @@ body {
   0% {
     background-position: -200% 0;
   }
+
   100% {
     background-position: 200% 0;
   }
 }
 
 .animate-shimmer {
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.05) 50%,
-    transparent 100%
-  );
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.05) 50%,
+      transparent 100%);
   background-size: 200% 100%;
   animation: shimmer 3s ease-in-out infinite;
 }
@@ -227,12 +222,10 @@ body {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.15),
-    transparent
-  );
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(255, 255, 255, 0.15),
+      transparent);
   transition: left 0.5s;
 }
 
@@ -263,12 +256,10 @@ body {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.15),
-    transparent
-  );
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(255, 255, 255, 0.15),
+      transparent);
   transition: left 0.5s;
 }
 
@@ -284,10 +275,8 @@ body {
 /* Section styling */
 .section-divider {
   height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(99, 102, 241, 0.3),
-    transparent
-  );
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(99, 102, 241, 0.3),
+      transparent);
 }
