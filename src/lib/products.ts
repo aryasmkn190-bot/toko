@@ -16,7 +16,7 @@ export interface Product {
 
 export const products: Product[] = [
     {
-        id: "prod-001",
+        id: "P01",
         name: "Template Laporan Keuangan",
         slug: "template-laporan-keuangan",
         description: "Template lengkap untuk pencatatan dan pelaporan keuangan bisnis secara otomatis.",
@@ -40,7 +40,7 @@ export const products: Product[] = [
         popular: true,
     },
     {
-        id: "prod-002",
+        id: "P02",
         name: "Template Budgeting & Cashflow",
         slug: "template-budgeting-cashflow",
         description: "Kelola anggaran dan arus kas bisnis Anda secara profesional dan terstruktur.",
@@ -62,7 +62,7 @@ export const products: Product[] = [
         gradient: "from-blue-500 to-indigo-600",
     },
     {
-        id: "prod-003",
+        id: "P03",
         name: "Template Invoice & Faktur",
         slug: "template-invoice-faktur",
         description: "Buat invoice profesional dan kelola faktur dengan tracking pembayaran otomatis.",
@@ -84,7 +84,7 @@ export const products: Product[] = [
         gradient: "from-violet-500 to-purple-600",
     },
     {
-        id: "prod-004",
+        id: "P04",
         name: "Template Manajemen Stok",
         slug: "template-manajemen-stok",
         description: "Kontrol inventori dan stok barang dengan sistem tracking yang akurat dan efisien.",
@@ -106,7 +106,7 @@ export const products: Product[] = [
         gradient: "from-amber-500 to-orange-600",
     },
     {
-        id: "prod-005",
+        id: "P05",
         name: "Ultimate Business Bundle",
         slug: "ultimate-business-bundle",
         description: "Paket lengkap semua template keuangan premium untuk manajemen bisnis all-in-one.",
@@ -150,9 +150,33 @@ export function formatPrice(price: number): string {
     }).format(price);
 }
 
-export function generateOrderId(): string {
-    const now = new Date();
-    const dateStr = now.toISOString().slice(2, 10).replace(/-/g, "");
-    const rand = Math.random().toString(36).substring(2, 8).toUpperCase();
-    return `INV${dateStr}${rand}`;
+/**
+ * Generate an order ID that encodes customer info.
+ * Format: {productId}-{phone}-{random}
+ * Example: P01-6285700009996-A3F2
+ * 
+ * This allows the webhook handler to extract customer info
+ * without needing a database or persistent storage.
+ */
+export function generateOrderId(productId: string, phone: string): string {
+    const rand = Math.random().toString(36).substring(2, 6).toUpperCase();
+    return `${productId}-${phone}-${rand}`;
+}
+
+/**
+ * Parse order ID to extract product ID and phone number.
+ * Returns null if format is invalid.
+ */
+export function parseOrderId(orderId: string): { productId: string; phone: string } | null {
+    // Format: P01-6285700009996-A3F2
+    const parts = orderId.split("-");
+    if (parts.length < 3) return null;
+
+    const productId = parts[0];
+    const phone = parts[1];
+    const product = getProductById(productId);
+
+    if (!product || !phone || phone.length < 10) return null;
+
+    return { productId, phone };
 }

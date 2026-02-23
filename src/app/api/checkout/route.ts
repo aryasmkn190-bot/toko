@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generatePaymentUrl } from "@/lib/pakasir";
-import { createOrder } from "@/lib/orders";
-import { getProductById } from "@/lib/products";
-import { generateOrderId } from "@/lib/products";
+import { getProductById, generateOrderId } from "@/lib/products";
 
 export async function POST(request: NextRequest) {
     try {
@@ -27,45 +25,34 @@ export async function POST(request: NextRequest) {
 
         // Check env vars
         if (!process.env.PAKASIR_PROJECT_SLUG || !process.env.PAKASIR_API_KEY) {
-            console.error("Missing PAKASIR env vars:", {
-                slug: !!process.env.PAKASIR_PROJECT_SLUG,
-                apiKey: !!process.env.PAKASIR_API_KEY,
-            });
+            console.error("Missing PAKASIR env vars");
             return NextResponse.json(
                 { error: "Konfigurasi payment gateway belum lengkap" },
                 { status: 500 }
             );
         }
 
-        const orderId = generateOrderId();
+        // Generate order ID that encodes product + phone
+        // This way the webhook can extract customer info without a database
+        const orderId = generateOrderId(product.id, customerPhone);
         const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
-        // Generate Pakasir payment URL (redirect method)
-        // This is more reliable - Pakasir handles the payment UI
+        // Generate Pakasir payment URL
         const paymentUrl = generatePaymentUrl(
             process.env.PAKASIR_PROJECT_SLUG,
             product.price,
             orderId,
             {
-                redirect: `${appUrl}/payment/success?order_id=${orderId}`,
+                redirect: `${appUrl}/payment/success?order_id=${orderId}&name=${encodeURIComponent(customerName)}`,
             }
         );
 
-        // Save order
-        createOrder({
+        console.log("Order created:", {
             orderId,
-            productId: product.id,
-            productName: product.name,
-            customerName,
-            customerPhone,
-            customerEmail,
+            product: product.name,
             amount: product.price,
-            status: "pending",
-            paymentMethod: "pakasir",
-            createdAt: new Date().toISOString(),
+            phone: customerPhone,
         });
-
-        console.log("Order created:", { orderId, product: product.name, amount: product.price });
 
         return NextResponse.json({
             success: true,

@@ -1,20 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PakasirWebhookPayload } from "@/lib/pakasir";
-import { getOrder, updateOrderStatus } from "@/lib/orders";
+import { parseOrderId, getProductById } from "@/lib/products";
 import {
     sendWhatsAppMessage,
     buildPurchaseMessage,
     buildAdminNotification,
 } from "@/lib/evolution-api";
-import { getProductById } from "@/lib/products";
 
 // Product links mapping - replace with your actual Google Sheet links
 const PRODUCT_LINKS: Record<string, string> = {
-    "prod-001": "https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID_1/copy",
-    "prod-002": "https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID_2/copy",
-    "prod-003": "https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID_3/copy",
-    "prod-004": "https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID_4/copy",
-    "prod-005": "https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID_BUNDLE/copy",
+    "P01": "https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID_1/copy",
+    "P02": "https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID_2/copy",
+    "P03": "https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID_3/copy",
+    "P04": "https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID_4/copy",
+    "P05": "https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID_BUNDLE/copy",
 };
 
 export async function POST(request: NextRequest) {
@@ -23,25 +22,38 @@ export async function POST(request: NextRequest) {
 
         console.log("Webhook received:", JSON.stringify(payload));
 
-        // Validate webhook
+        // Only process completed payments
         if (payload.status !== "completed") {
+            console.log("Ignoring non-completed webhook:", payload.status);
             return NextResponse.json({ received: true, processed: false });
         }
 
-        const order = getOrder(payload.order_id);
+        // Parse order ID to extract product + phone
+        const orderInfo = parseOrderId(payload.order_id);
 
-        if (!order) {
-            console.error(`Order not found: ${payload.order_id}`);
+        if (!orderInfo) {
+            console.error(`Could not parse order_id: ${payload.order_id}`);
             return NextResponse.json(
-                { error: "Order not found" },
+                { error: "Invalid order_id format" },
+                { status: 400 }
+            );
+        }
+
+        const { productId, phone } = orderInfo;
+        const product = getProductById(productId);
+
+        if (!product) {
+            console.error(`Product not found for ID: ${productId}`);
+            return NextResponse.json(
+                { error: "Product not found" },
                 { status: 404 }
             );
         }
 
-        // Validate amount
-        if (payload.amount !== order.amount) {
+        // Validate amount matches product price
+        if (payload.amount !== product.price) {
             console.error(
-                `Amount mismatch for ${payload.order_id}: expected ${order.amount}, got ${payload.amount}`
+                `Amount mismatch for ${payload.order_id}: expected ${product.price}, got ${payload.amount}`
             );
             return NextResponse.json(
                 { error: "Amount mismatch" },
@@ -49,44 +61,46 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Update order status
-        updateOrderStatus(order.orderId, "completed", payload.completed_at);
+        const productLink = PRODUCT_LINKS[productId] || "https://example.com/product";
 
-        // Get product link
-        const product = getProductById(order.productId);
-        const productLink =
-            PRODUCT_LINKS[order.productId] || "https://example.com/product";
+        console.log("Processing payment:", {
+            orderId: payload.order_id,
+            product: product.name,
+            phone,
+            amount: payload.amount,
+        });
 
-        // Send WhatsApp messages
-        if (product) {
-            // 1. Send product link to customer
-            const customerMessage = buildPurchaseMessage(
-                order.customerName,
+        // 1. Send product link to customer via WhatsApp
+        const customerMessage = buildPurchaseMessage(
+            "Pelanggan", // Name from order_id isn't stored, use generic
+            product.name,
+            payload.order_id,
+            productLink
+        );
+        const customerSent = await sendWhatsAppMessage(phone, customerMessage);
+        console.log("Customer WA sent:", customerSent);
+
+        // 2. Notify admin
+        const adminPhone = process.env.NEXT_PUBLIC_WA_ADMIN;
+        if (adminPhone) {
+            const adminMessage = buildAdminNotification(
+                "Pelanggan",
+                phone,
                 product.name,
-                order.orderId,
-                productLink
+                payload.order_id,
+                payload.amount,
+                payload.payment_method
             );
-            await sendWhatsAppMessage(order.customerPhone, customerMessage);
-
-            // 2. Notify admin
-            const adminPhone = process.env.NEXT_PUBLIC_WA_ADMIN;
-            if (adminPhone) {
-                const adminMessage = buildAdminNotification(
-                    order.customerName,
-                    order.customerPhone,
-                    product.name,
-                    order.orderId,
-                    order.amount,
-                    payload.payment_method
-                );
-                await sendWhatsAppMessage(adminPhone, adminMessage);
-            }
+            const adminSent = await sendWhatsAppMessage(adminPhone, adminMessage);
+            console.log("Admin WA sent:", adminSent);
         }
 
         return NextResponse.json({
             received: true,
             processed: true,
-            orderId: order.orderId,
+            orderId: payload.order_id,
+            productSent: product.name,
+            customerPhone: phone,
         });
     } catch (error) {
         console.error("Webhook processing error:", error);
