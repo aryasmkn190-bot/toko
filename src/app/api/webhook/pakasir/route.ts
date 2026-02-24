@@ -10,11 +10,9 @@ import {
 
 // Product links mapping - replace with your actual Google Sheet links
 const PRODUCT_LINKS: Record<string, string> = {
-    "P01": "https://drive.google.com/drive/folders/1CEnAPrE6LASZx3ncITCGlHFYGgc2MdXf?usp=sharing",
-    "P02": "https://drive.google.com/drive/folders/1siQcs0bh5yfhas3TObcz7Dqn65nlSsUg?usp=sharing",
-    "P03": "https://drive.google.com/drive/folders/1awT3ddUcorcJuX5VgzGYIXMOnXaSj885?usp=sharing",
-    "P04": "https://drive.google.com/drive/folders/1T_VkuHeAP5GxvdjpCaYOfWqh2ZSlgu-J?usp=sharing",
-    "P05": "https://drive.google.com/drive/folders/1iSiSaCjz3TWdQXs3Rzk8ySQD-20cwMKE?usp=drive_link",
+    "P01": "https://drive.google.com/drive/folders/1YG5U1RRynf90zCIVUYtc5FxCndP_16dT?usp=sharing",
+    "P02": "https://drive.google.com/drive/folders/1GnesjTPH_CbqU1fmxkb7pZQpl5Ahy1vp?usp=sharing",
+    "P03": "https://drive.google.com/drive/folders/1YHXI8MTcjmc_6B2MyQfBI54Agf5k2vwI?usp=sharing",
 };
 
 // Simple dedup: track processed order IDs to prevent duplicate sends
