@@ -28,7 +28,7 @@ const testimonials = [
     {
         name: "Budi Santoso",
         role: "Owner, Warung Makan Sederhana",
-        text: "Awalnya skeptis karena cuma Google Sheet, tapi setelah pakai langsung amazed. Budgeting jadi terstruktur, cashflow terkontrol.",
+        text: "Awalnya skeptis karena cuma Google Sheet, tapi setelah pakai langsung amazed. Kalkulator HPP-nya akurat, penentuan harga jual jadi lebih tepat.",
         rating: 5,
         avatar: "BS",
     },

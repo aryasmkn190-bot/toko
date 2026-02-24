@@ -10,14 +10,14 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "FinanceKit - Template Keuangan Premium | Google Spreadsheet",
   description:
-    "Koleksi template keuangan premium berbasis Google Spreadsheet untuk mengelola bisnis Anda. Laporan keuangan otomatis, budgeting, invoice, dan manajemen stok.",
+    "Koleksi template keuangan premium berbasis Google Spreadsheet untuk mengelola bisnis Anda. Template keuangan, pricing tools, inventory tracker, invoice, dan ebook.",
   keywords: [
     "template keuangan",
     "google spreadsheet",
     "laporan keuangan",
     "template bisnis",
-    "budgeting",
-    "cashflow",
+    "pricing tools",
+    "kalkulator hpp",
     "invoice",
     "manajemen stok",
   ],

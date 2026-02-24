@@ -87,7 +87,7 @@ export default function Footer() {
                                     href="#products"
                                     className="text-sm text-slate-400 hover:text-white transition-colors"
                                 >
-                                    Template Laporan Keuangan
+                                    Template Keuangan
                                 </a>
                             </li>
                             <li>
@@ -95,7 +95,7 @@ export default function Footer() {
                                     href="#products"
                                     className="text-sm text-slate-400 hover:text-white transition-colors"
                                 >
-                                    Template Budgeting
+                                    Template Keuangan + Pricing Tools
                                 </a>
                             </li>
                             <li>
@@ -103,23 +103,7 @@ export default function Footer() {
                                     href="#products"
                                     className="text-sm text-slate-400 hover:text-white transition-colors"
                                 >
-                                    Template Invoice
-                                </a>
-                            </li>
-                            <li>
-                                <a
-                                    href="#products"
-                                    className="text-sm text-slate-400 hover:text-white transition-colors"
-                                >
-                                    Template Manajemen Stok
-                                </a>
-                            </li>
-                            <li>
-                                <a
-                                    href="#products"
-                                    className="text-sm text-slate-400 hover:text-white transition-colors"
-                                >
-                                    Ultimate Bundle
+                                    Paket Lengkap Bisnis
                                 </a>
                             </li>
                         </ul>
