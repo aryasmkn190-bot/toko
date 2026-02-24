@@ -65,7 +65,6 @@ export async function POST(request: NextRequest) {
 
         // SECURITY: Verify payment with Pakasir Transaction Detail API
         // This prevents fake webhooks from triggering product delivery
-        // NOTE: Temporarily relaxed for sandbox testing - re-enable for production!
         try {
             const txDetail = await getTransactionDetail(payload.order_id, product.price);
 
@@ -87,9 +86,11 @@ export async function POST(request: NextRequest) {
 
             console.log("Payment verified via Pakasir API ✅");
         } catch (verifyError) {
-            // SANDBOX MODE: Allow processing even if verification fails
-            // TODO: Re-enable strict verification for production
-            console.warn("⚠️ SANDBOX: Pakasir verification failed, proceeding anyway:", verifyError);
+            console.error("Failed to verify payment with Pakasir:", verifyError);
+            return NextResponse.json(
+                { error: "Could not verify payment" },
+                { status: 500 }
+            );
         }
 
         // Mark as processed BEFORE sending (prevent duplicate sends on retry)
