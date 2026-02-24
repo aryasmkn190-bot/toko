@@ -39,8 +39,8 @@ export default function ProductsSection() {
                             viewport={{ once: true }}
                             transition={{ duration: 0.5, delay: index * 0.1 }}
                             className={`glass-card rounded-2xl overflow-hidden flex flex-col ${product.popular
-                                    ? "ring-2 ring-indigo-500/50 md:col-span-1 lg:col-span-1"
-                                    : ""
+                                ? "ring-2 ring-indigo-500/50 md:col-span-1 lg:col-span-1"
+                                : ""
                                 } ${product.id === "prod-005"
                                     ? "md:col-span-2 lg:col-span-3"
                                     : ""
@@ -53,8 +53,10 @@ export default function ProductsSection() {
                             >
                                 {product.badge && (
                                     <span
-                                        className={`absolute top-4 right-4 text-xs font-bold px-3 py-1 rounded-full ${product.badge === "Best Seller"
-                                                ? "bg-amber-500/20 text-amber-300 border border-amber-500/30"
+                                        className={`absolute top-4 right-4 text-xs font-bold px-3 py-1 rounded-full ${product.badge.includes("Best Seller")
+                                            ? "bg-amber-500/20 text-amber-300 border border-amber-500/30"
+                                            : product.badge.includes("Best Value")
+                                                ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
                                                 : "bg-rose-500/20 text-rose-300 border border-rose-500/30"
                                             }`}
                                     >
@@ -84,8 +86,8 @@ export default function ProductsSection() {
                                 <div className="flex items-baseline gap-3 flex-wrap">
                                     <span
                                         className={`text-3xl font-extrabold ${product.id === "prod-005"
-                                                ? "gradient-text"
-                                                : "text-white"
+                                            ? "gradient-text"
+                                            : "text-white"
                                             }`}
                                     >
                                         {formatPrice(product.price)}
@@ -108,8 +110,8 @@ export default function ProductsSection() {
                             {/* Features */}
                             <div
                                 className={`px-6 pb-4 flex-1 ${product.id === "prod-005"
-                                        ? "lg:grid lg:grid-cols-2 lg:gap-x-8"
-                                        : ""
+                                    ? "lg:grid lg:grid-cols-2 lg:gap-x-8"
+                                    : ""
                                     }`}
                             >
                                 {product.features.map((feature, i) => (
@@ -128,8 +130,8 @@ export default function ProductsSection() {
                                 <Link
                                     href={`/checkout/${product.slug}`}
                                     className={`w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-semibold text-white transition-all ${product.id === "prod-005"
-                                            ? "btn-accent"
-                                            : "btn-primary"
+                                        ? "btn-accent"
+                                        : "btn-primary"
                                         }`}
                                 >
                                     <HiShoppingCart />
