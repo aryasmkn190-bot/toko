@@ -17,20 +17,19 @@ export default function Navbar() {
     return (
         <nav
             className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled
-                    ? "glass py-3 shadow-lg shadow-black/20"
-                    : "bg-transparent py-5"
+                ? "glass py-3 shadow-lg shadow-black/20"
+                : "bg-transparent py-5"
                 }`}
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between">
                     {/* Logo */}
-                    <Link href="/" className="flex items-center gap-2 group">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-xl font-bold shadow-lg shadow-indigo-500/30 group-hover:shadow-indigo-500/50 transition-shadow">
-                            F
-                        </div>
-                        <span className="text-xl font-bold tracking-tight">
-                            Finance<span className="text-indigo-400">Kit</span>
-                        </span>
+                    <Link href="/" className="flex items-center group">
+                        <img
+                            src="/logo-all.png"
+                            alt="FinanceKit Logo"
+                            className="h-28 md:h-36 w-auto object-contain -mt-8 -mb-12 md:-mt-11 md:-mb-17 transition-transform duration-300 group-hover:scale-105"
+                        />
                     </Link>
 
                     {/* Desktop Nav */}

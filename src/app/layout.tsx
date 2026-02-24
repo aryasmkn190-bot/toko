@@ -27,6 +27,10 @@ export const metadata: Metadata = {
       "Koleksi template keuangan premium berbasis Google Spreadsheet untuk mengelola bisnis Anda.",
     type: "website",
   },
+  icons: {
+    icon: "/logo-all.png",
+    apple: "/logo-all.png",
+  },
 };
 
 export default function RootLayout({

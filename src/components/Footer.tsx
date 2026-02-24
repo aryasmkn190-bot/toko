@@ -44,11 +44,15 @@ export default function Footer() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
                     {/* Brand */}
                     <div className="lg:col-span-2">
-                        <div className="flex items-center gap-2 mb-4">
-                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-xl font-bold">
-                                F
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center overflow-hidden shrink-0">
+                                <img
+                                    src="/logo-header.png"
+                                    alt="FinanceKit Icon"
+                                    className="w-full h-full object-contain scale-[1.35] md:scale-[1.4]"
+                                />
                             </div>
-                            <span className="text-xl font-bold">
+                            <span className="text-2xl font-bold tracking-tight">
                                 Finance<span className="text-indigo-400">Kit</span>
                             </span>
                         </div>
